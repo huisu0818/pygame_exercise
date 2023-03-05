@@ -1,4 +1,5 @@
 import pygame
+import os
 
 pygame.init() # 초기화 (필수)
 
@@ -15,10 +16,15 @@ pygame.display.set_caption("Huisu Game") # 게임 이름
 clock = pygame.time.Clock()
 
 # 배경 이미지 불러오기
-background = pygame.image.load("C:/Users/pc/Desktop/code_manager(DeskTop)/개인 프로젝트/pygame_exercise/pygame_test/background.png")
+current_path = os.path.dirname(__file__)
+background_path = os.path.join(current_path, "background.png")
+chracter_path = os.path.join(current_path, "character.png")
+enemy_path = os.path.join(current_path, "enemy.png")
+
+background = pygame.image.load(background_path)
 
 # 캐릭터 (스프라이트) 불러오기
-character = pygame.image.load("C:/Users/pc/Desktop/code_manager(DeskTop)/개인 프로젝트/pygame_exercise/pygame_test/character.png")
+character = pygame.image.load(chracter_path)
 character_size = character.get_rect().size # 이미지의 크기를 구해옴
 character_width = character_size[0] # 캐릭터 가로 크기
 character_height = character_size[1] # 캐릭터 세로 크기
@@ -33,7 +39,7 @@ to_y = 0
 character_speed = 0.6
 
 # enemy 캐릭터
-enemy = pygame.image.load("C:/Users/pc/Desktop/code_manager(DeskTop)/개인 프로젝트/pygame_exercise/pygame_test/enemy.png")
+enemy = pygame.image.load(enemy_path)
 enemy_size = enemy.get_rect().size # 이미지의 크기를 구해옴
 enemy_width = enemy_size[0] # 캐릭터 가로 크기
 enemy_height = enemy_size[1] # 캐릭터 세로 크기
