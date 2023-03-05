@@ -70,16 +70,19 @@ ball_speed_y = [-18, -15, -15, -9]
 # 공들
 balls = []
 
-balls.append(
-    {
+balls.append({
     "pos_x" : 50, # 공의 x 좌표
     "pos_y" : 50, # 공의 y 좌표
     "img_idx" : 0, # 공의 이미지 인덱스
     "to_x" : 3, # x축 이동방향, -3이면 왼쪽으로, +3이면 오른쪽으로
     "to_y" : -6, # y축 이동방향,
-    "init_spd_y" : ball_speed_y[0] # y 최초 속도
-    }
-)
+    "init_spd_y" : ball_speed_y[0]}) # y 최초 속도
+
+
+# 사라질 무기, 공 정보 저장 변수
+weapon_to_remove = -1
+ball_to_remove = -1
+
 
 
 # ********************************************************************************** #
@@ -87,7 +90,7 @@ balls.append(
 
 running = True 
 while running:
-    dt = clock.tick(144)
+    dt = clock.tick(60)
 
     # 3-1) 이벤트 처리
     for event in pygame.event.get():
@@ -154,6 +157,84 @@ while running:
 
 
     # 3-3) 충돌 처리
+
+    # 캐릭터 rect 정보 업데이트
+    character_rect = character.get_rect()
+    character_rect.left = character_x_pos
+    character_rect.top = character_y_pos
+
+    for ball_idx, ball_val in enumerate(balls):
+        ball_pos_x = ball_val["pos_x"]
+        ball_pos_y = ball_val["pos_y"]
+        ball_img_idx = ball_val["img_idx"]
+
+        # 공 rect 정보 업데이트
+        ball_rect = ball_images[ball_img_idx].get_rect()
+        ball_rect.left = ball_pos_x
+        ball_rect.top = ball_pos_y
+
+        # 공과 캐릭터 충돌 처리
+        if character_rect.colliderect(ball_rect):
+            running = False
+            break
+
+        # 공과 무기의 충돌 처리
+        for weapon_idx, weapon_val in enumerate(weapons):
+            weapon_pos_x = weapon_val[0]
+            weapon_pos_y = weapon_val[1]
+
+            # 무기 rect 정보 업데이트
+            weapon_rect = weapon.get_rect()
+            weapon_rect.left = weapon_pos_x
+            weapon_rect.top = weapon_pos_y
+
+            # 충돌 체크
+            if weapon_rect.colliderect(ball_rect):
+                weapon_to_remove = weapon_idx # 해당 무기 없애기 위한 값 설정
+                ball_to_remove = ball_idx # 해당 공  없애기 위한 값 설정
+
+                # 가장 작은 크기의 공이 아니라면 다음 단계의 공으로 나눠주기
+                if ball_img_idx < 3:
+
+                    # 현재 공 크기 정보를 가지고 옴
+                    ball_width = ball_rect.size[0]
+                    ball_height = ball_rect.size[1]
+
+                    # 나눠진 공 정보
+                    small_ball_rect = ball_images[ball_img_idx + 1].get_rect()
+                    small_ball_width = small_ball_rect.size[0]
+                    small_ball_height = small_ball_rect.size[1]
+
+                    # 왼쪽으로 튕기는 작은 공
+                    balls.append({
+                        "pos_x" : ball_pos_x + (ball_width - small_ball_width)/2, # 공의 x 좌표
+                        "pos_y" : ball_pos_y + (ball_height - small_ball_height)/2, # 공의 y 좌표
+                        "img_idx" : ball_img_idx + 1, # 공의 이미지 인덱스
+                        "to_x" : -3, # x축 이동방향, -3이면 왼쪽으로, +3이면 오른쪽으로
+                        "to_y" : -6, # y축 이동방향,
+                        "init_spd_y" : ball_speed_y[ball_img_idx + 1]}) # y 최초 속도
+
+                    # 오른쪽으로 튕기는 작은 공
+                    balls.append({
+                        "pos_x" : ball_pos_x + (ball_width - small_ball_width)/2, # 공의 x 좌표
+                        "pos_y" : ball_pos_y + (ball_height - small_ball_height)/2, # 공의 y 좌표
+                        "img_idx" : ball_img_idx + 1, # 공의 이미지 인덱스
+                        "to_x" : +3, # x축 이동방향, -3이면 왼쪽으로, +3이면 오른쪽으로
+                        "to_y" : -6, # y축 이동방향,
+                        "init_spd_y" : ball_speed_y[ball_img_idx + 1]}) # y 최초 속도   
+
+                break
+
+    # 충돌된 공 or 무기 없애기
+    if ball_to_remove > -1:
+        del balls[ball_to_remove]
+        ball_to_remove = -1
+
+    if weapon_to_remove >-1:
+        del weapons[weapon_to_remove]
+        weapon_to_remove = -1
+
+
 
     # 3-4) 화면에 그리기
     screen.blit(background, (0,0))
