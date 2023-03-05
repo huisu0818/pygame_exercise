@@ -13,11 +13,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Huisu Game") # 게임 이름
 
 # 배경 이미지 불러오기
-background = pygame.image.load("/Users/huisu/Desktop/Code_manager/개인 프로젝트/python_programing/오락실 게임/background.png")
-
-# 캐릭터(스프라이트) 불러오기
-character = pygame.image.load("/Users/huisu/Desktop/Code_manager/개인 프로젝트/python_programing/오락실 게임/background.png")
-
+background = pygame.image.load("C:/Users/pc/Desktop/code_manager(DeskTop)/개인 프로젝트/pygame_exercise/pygame_test/background.png")
 
 # 이벤트 루프 
 running = True # 게임이 진행여부
@@ -26,8 +22,9 @@ while running:
         if event.type == pygame.QUIT: # 창이 닫히는 이벤트 발생 여부
             running = False
 
+    # screen.fill((0, 0, 255))
     screen.blit(background, (0, 0)) # 배경 그리기
     pygame.display.update() # 게임화면을 계속 그려줌
 
 # pygame 종료
-pygame.quit()
+pygame.quit() 
